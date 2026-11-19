@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demon Slayer: Mugen Train - Characters Gallery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="rsc/css/style.css">
+    <style>
+        body { padding-top: 90px; }
+        
+        .characters-header-banner {
+            background: linear-gradient(rgba(7,7,9,0.85), rgba(7,7,9,0.95)), url('media/img/chars-bg.jpg') center/cover;
+            padding: 80px 0; 
+            margin-bottom: 50px; 
+            border-bottom: 3px solid var(--sun-gold);
+        }
+
+        /* UNIFIED HORIZONTAL SCROLL ROW */
+        .character-scroll-row {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 30px;
+            padding: 20px 10px 50px 10px;
+            scroll-snap-type: x mandatory;
+        }
+
+        .character-scroll-row::-webkit-scrollbar { height: 8px; }
+        .character-scroll-row::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, var(--flame-red), var(--sun-gold));
+            border-radius: 4px;
+        }
+
+        .char-col {
+            flex: 0 0 280px;
+            scroll-snap-align: start;
+        }
+
+        .portrait-card {
+            background: linear-gradient(145deg, #161622, #0d0d12);
+            border: 2px solid rgba(253, 216, 53, 0.3);
+            border-radius: 18px;
+            overflow: hidden;
+            cursor: pointer;
+            perspective: 1000px;
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+        }
+
+        .portrait-card img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            object-position: top center; /* Keeps character faces perfectly framed */
+        }
+
+        /* Upward lift and subtle 3D tilt animation on click/hover */
+        .portrait-card:hover, .portrait-card.card-active-flip {
+            transform: translateY(-15px) rotateX(6deg) scale(1.02);
+            border-color: var(--flame-red);
+            box-shadow: 0 30px 60px rgba(234, 43, 43, 0.6), 0 0 25px rgba(253, 216, 53, 0.5);
+        }
+
+    
+        /* ELEMENTAL MAGIC SPLASH OVERLAY */
+        #magic-splash-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(5, 5, 7, 0.94); z-index: 99999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
+        }
+
+        #magic-splash-overlay.active {
+            opacity: 1; visibility: visible;
+            animation: splashPulse 0.8s ease-in-out infinite alternate;
+        }
+
+        .splash-aura-ring {
+            width: 220px; height: 220px; border-radius: 50%;
+            border: 5px dashed var(--sun-gold);
+            box-shadow: 0 0 60px var(--flame-red), 0 0 100px var(--sun-gold);
+            animation: spinRing 1s linear infinite;
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .splash-avatar {
+            width: 180px; height: 180px; border-radius: 70%; object-fit: cover;
+            border: 3px solid #fff;
+        }
+
+        .splash-power-text {
+            font-family: 'Cinzel Decorative', sans-serif !important;
+            font-size: 2.2rem; font-weight: 900; text-transform: uppercase; text-align: center;
+            background: linear-gradient(90deg, #ffcc00, #ea2b2b, #00f5ff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(234,43,43,0.9));
+        }
+
+        @keyframes spinRing {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.12); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes splashPulse {
+            from { background: rgba(234, 43, 43, 0.15); }
+            to { background: rgba(5, 5, 7, 0.96); }
+        }
+
+        /*CREATIVE CINEMATIC DOSSIER MODAL BOX */
+        .modal-content.cinematic-dossier-box {
+            background: radial-gradient(circle at top right, rgba(234, 43, 43, 0.15) 0%, transparent 60%),
+                        linear-gradient(145deg, #12121a, #07070a);
+            border: 3px solid transparent;
+            border-image: linear-gradient(135deg, var(--sun-gold), var(--flame-red)) 1;
+            box-shadow: 0 0 60px rgba(234, 43, 43, 0.6), inset 0 0 30px rgba(0,0,0,0.9);
+            color: #fff;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .cinematic-dossier-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--sun-gold), var(--flame-red), var(--water-teal));
+        }
+
+        .dossier-img-frame {
+            position: relative;
+            border: 2px solid var(--sun-gold);
+            padding: 5px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 10px;
+            box-shadow: 0 0 25px rgba(253, 216, 53, 0.3);
+        }
+
+        /*CINEMATIC TYPEWRITER INTRO STYLES */
+        #character-intro-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(5, 5, 7, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            text-align: center;
+            animation: fadeInIntro 0.5s ease forwards;
+        }
+
+        @keyframes fadeInIntro {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .typewriter-box {
+            background: radial-gradient(circle at center, rgba(20, 10, 12, 0.95) 0%, rgba(5, 5, 7, 0.98) 100%);
+            border: 3px solid var(--sun-gold);
+            padding: 40px 60px;
+            border-radius: 20px;
+            max-width: 800px;
+            box-shadow: 0 0 50px rgba(234, 43, 43, 0.6), inset 0 0 20px rgba(253, 216, 53, 0.2);
+        }
+
+        .typewriter-text {
+            font-family: 'Liberation Serif', serif !important;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #fff;
+            line-height: 1.6;
+            text-shadow: 0 0 10px rgba(234, 43, 43, 0.8);
+            min-height: 120px;
+            text-align: left;
+        }
+
+        .typewriter-cursor {
+             display: none !important;
+        }
+
+        @keyframes blinkCursor {
+            0%, 100% { opacity: 0; }
+            0% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!--  TYPEWRITER INTRO OVERLAY (Appears first when page loads) -->
+    <div id="character-intro-overlay">
+        <div class="typewriter-box">
+            <div id="typewriter-output" class="typewriter-text"></div><span class="typewriter-cursor"></span>
+            <div class="mt-4">
+                <button id="skip-intro-btn" class="btn btn-warning px-4 py-2 fw-bold text-dark">Enter Character Archives</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ELEMENTAL MAGIC SPLASH OVERLAY -->
+    <div id="magic-splash-overlay">
+        <div class="splash-aura-ring">
+            <img id="splash-img" src="" alt="Power Splash" class="splash-avatar">
+        </div>
+        <h2 id="splash-text" class="splash-power-text px-3">Unleashing Breathing Art...</h2>
+    </div>
+
+    
+    <!-- NAVBAR WITH SOLID BLACK HEADER & MOVIE LOGO -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="index.html">
+                <img src="media/img/movie-logo.jpg" alt="Movie Logo" style="height: 40px; width: auto;">
+                <span>MUGEN TRAIN</span>
+            </a>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Feature</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#cinema">Cinema Schedule</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="characters.html">Characters</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li>
+                    <li class="nav-item ms-lg-3">
+                        <button class="btn btn-outline-warning btn-sm position-relative" data-bs-toggle="modal" data-bs-target="#cartModal">
+                            🛒 Cart <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HEADER BANNER -->
+    <header class="characters-header-banner text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Characters Gallery</h1>
+            <p class="text-muted">Explore all characters. Click on any character to know them fully!</p>
+        </div>
+    </header>
+
+    <!--  MAIN CONTENT WRAPPER (Starts hidden with opacity: 0 until typewriter finishes) -->
+    <main id="characters-main-content" class="container-fluid px-lg-5 my-5" style="opacity: 0; transition: opacity 1s ease;">
+        
+        <!-- INTRODUCTION -->
+        <section class="container my-5 text-center">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <h2 class="text-uppercase mb-3" style="letter-spacing: 2px;">The Battle of Dreams and Blade</h2>
+                    <p class="text-muted lead" style="line-height: 1.8;">
+                       Aboard a train of endless dreams, brave demon slayers face off against powerful, evil demons. Click any character below to check out their powers and profile.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SINGLE CHARACTER ROW -->
+        <section class="mb-5">
+            <h2 class="border-bottom border-danger pb-2 mb-4">Mugen Train Characters</h2>
+            <div class="character-scroll-row">
+                
+                <div class="char-col">
+                    <div class="portrait-card" onclick="triggerMagicSplash('Kyojuro Rengoku', ' Flame Breathing: Ninth Form: Purgatory', 'Protagonist', 'Satoshi Hino', 'media/img/rengoku.jpg', 'Kyojuro Rengoku is the exuberant and immensely powerful Flame Hashira of the Demon Slayer Corps, recognized instantly by his striking flame hair. Possessing an unshakeable moral compass, he fiercely protects the weak with blazing conviction. During the Mugen Train incident, he takes Tanjiro and his friends under his wing while leading the charge. His burning spirit and legendary final stand leave an everlasting impact.')">
+                        <img src="media/img/rengoku.jpg" alt="Rengoku" onerror="this.src='https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80'">
+                        <div class="portrait-name-bar">
+                            <h5 class="mb-0 text-warning">Kyojuro Rengoku</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="char-col">
+                    <div class="portrait-card" onclick="triggerMagicSplash('Tanjiro Kamado', ' Water Breathing & Hinokami Kagura ', 'Protagonist', 'Natsuki Hanae', 'media/img/tanjiro.jpg', 'Tanjiro Kamado is a compassionate demon slayer on a quest to cure his sister Nezuko and avenge his slaughtered family. Aboard the Mugen Train, he demonstrates incredible mental fortitude when trapped inside agonizing dream illusions. His mastery over Water Breathing and Hinokami Kagura allows him to execute decisive strikes against supernatural foes.')">
+                        <img src="media/img/tanjiro.jpg" alt="Tanjiro" onerror="this.src='https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80'">
+                        <div class="portrait-name-bar">
+                            <h5 class="mb-0 text-warning">Tanjiro Kamado</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="char-col">
+                    <div class="portrait-card" onclick="triggerMagicSplash('Zenitsu Agatsuma', ' Thunder Breathing: First Form: Thunderclap and Flash ', 'Protagonist', 'Hiro Shimono', 'media/img/zenitsu.jpg', 'Zenitsu Agatsuma is a cowardly yet extraordinarily gifted swordsman specializing in Thunder Breathing. While awake, he tends to panic at every little danger, but when rendered unconscious by fear, his true lightning-fast reflexes take over. On the train, he remains fiercely protective of Nezuko within both the dreamscape and reality.')">
+                        <img src="media/img/zenitsu.jpg" alt="Zenitsu" onerror="this.src='https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=80'">
+                        <div class="portrait-name-bar">
+                            <h5 class="mb-0 text-warning">Zenitsu Agatsuma</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="char-col">
+                    <div class="portrait-card" onclick="triggerMagicSplash('Inosuke Hashibira', 'Beast Breathing: Fang Stride ', 'Protagonist', 'Yoshitsugu Matsuoka', 'media/img/inosuke.jpg', 'Inosuke Hashibira is a wild, boar-masked brawler raised by beasts in the mountains with superhuman tactile senses. He charges into battle utilizing his unique Beast Breathing style and dual serrated katanas. His unorthodox animal instincts help perceive Enmu hidden flesh core during the climax.')">
+                        <img src="media/img/inosuke.jpg" alt="Inosuke" onerror="this.src='https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80'">
+                        <div class="portrait-name-bar">
+                            <h5 class="mb-0 text-warning">Inosuke Hashibira</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="char-col">
+                    <div class="portrait-card" onclick="triggerMagicSplash('Nezuko Kamado', ' Blood Demon Art: Exploding Blood ', 'Protagonist', 'Akari Kito', 'media/img/nezuko.jpg', 'Nezuko Kamado is Tanjiros younger sister who retains her human emotions and protective instincts. Inside the train, she uses her Blood Demon Art to burn away Enmus flesh tentacles. Her unwavering loyalty anchors Tanjiros emotional stability.')">
+                        <img src="media/img/nezuko.jpg" alt="Nezuko" onerror="this.src='https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80'">
+                        <div class="portrait-name-bar">
+                            <h5 class="mb-0 text-warning">Nezuko Kamado</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="char-col">
+                    <div class="portrait-card" onclick="triggerMagicSplash('Enmu (Lower Rank One)', ' Blood Demon Art: Forced Sleep Hypnosis', 'Antagonist (Lower Rank 1)', 'Daisuke Hirakawa', 'media/img/enmu.jpg', 'Enmu is a sadistic demon who takes morbid pleasure in manipulating human dreams. He successfully merges his physical form with the Mugen Train itself, turning the entire locomotive into a lethal trap for the Demon Slayer Corps.')">
+                        <img src="media/img/enmu.jpg" alt="Enmu" onerror="this.src='https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80'">
+                        <div class="portrait-name-bar">
+                            <h5 class="mb-0 text-warning">Enmu</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="char-col">
+                    <div class="portrait-card" onclick="triggerMagicSplash('Akaza (Upper Rank Three)', ' Destructive Death: Compass Needle Aura', 'Antagonist (Upper Rank 3)', 'Akira Ishida', 'media/img/akaza.jpg', 'Akaza is an immensely powerful upper rank demon whose sole obsession is physical strength. He ambushes the team after Enmus defeat, forcing Rengoku into a cataclysmic duel of unmatched cinematic intensity.')">
+                        <img src="media/img/akaza.jpg" alt="Akaza" onerror="this.src='https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80'">
+                        <div class="portrait-name-bar">
+                            <h5 class="mb-0 text-warning">Akaza</h5>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- CHARACTER MODAL -->
+    <div class="modal fade" id="characterModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content cinematic-dossier-box p-4">
+                <div class="modal-header border-secondary align-items-center">
+                    <h3 id="modal-char-name" class="text-warning mb-0" style="font-family: 'Cinzel Decorative', sans-serif; letter-spacing: 2px;">Character Name</h3>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body row align-items-center py-4">
+                    <div class="col-md-5 text-center mb-3 mb-md-0">
+                        <div class="dossier-img-frame">
+                            <img id="modal-char-img" src="" alt="Character" class="img-fluid rounded" style="max-height: 340px; object-fit: cover; width: 100%;">
+                        </div>
+                    </div>
+                    <div class="col-md-7 ps-md-4">
+                        <h5 id="modal-char-role" class="text-danger fw-bold mb-2 text-uppercase" style="letter-spacing: 1px;">Role</h5>
+                        <p class="text-warning small mb-3 border-bottom border-secondary pb-2">🎙️ Voice Actor: <span id="modal-char-va" class="text-light fw-bold">VA Name</span></p>
+                        <p id="modal-char-desc" class="text-muted" style="line-height: 1.8; font-size: 1.02rem; color: #d1d1e0 !important;">Description goes here...</p>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary justify-content-between">
+                    <span class="text-muted small">Mugen Train Archives</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CART MODAL -->
+    <div class="modal fade" id="cartModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light border border-warning">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-warning">🛒 Your Mugen Shopping Cart</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="cart-items-list"><p class="text-muted text-center py-3">Your cart is currently empty.</p></div>
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary">
+                        <h5 class="mb-0 text-light">Total:</h5>
+                        <h5 id="cart-total" class="mb-0 text-danger fw-bold">₱0.00</h5>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="products.html" class="btn btn-warning text-dark fw-bold">Go to Products</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER (3 Columns requirement) -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="media/img/brand-logo.jpg" alt="Mugen Train Brand Logo" class="footer-brand-logo">
+                        <h6 class="text-uppercase fw-bold mb-0">Mugen Train</h6>
+                    </div>
+                    <p class="text-muted small mb-2">The official cinematic promotion website dedicated to the Demon Slayer movie masterpiece.</p>
+                    <div class="d-flex gap-3">
+                        <a href="https://facebook.com" target="_blank" class="text-light small text-decoration-none">
+                            <i class="fa-brands fa-facebook"></i> Facebook
+                        </a>
+                        <a href="https://x.com" target="_blank" class="text-light small text-decoration-none">
+                            <i class="fa-brands fa-x-twitter"></i> X
+                        </a>
+                        <a href="https://youtube.com" target="_blank" class="text-light small text-decoration-none">
+                            <i class="fa-brands fa-youtube"></i> YouTube
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="text-uppercase fw-bold mb-2">Developed By</h6>
+                    <p class="text-muted small mb-1">Angular JS</p>
+                    <div class="footer-team-grid text-muted small">
+                        <span>Jhanelle Palino</span>
+                        <span>Mae Pearl Gorio</span>
+                        <span>Marjorie Lasala</span>
+                        <span>Davidson Camitan</span>
+                        <span>Guian JoSh Gabris</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="text-uppercase fw-bold mb-2">Quick Navigation</h6>
+                    <ul class="list-unstyled small mb-0" style="line-height: 1.7;">
+                        <li><a href="index.html">Feature Page</a></li>
+                        <li><a href="#cinema">Cinema Schedule</a></li>
+                        <li><a href="characters.html">Characters Page</a></li>
+                        <li><a href="products.html">Merchandise Products</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-secondary my-3">
+            <div class="text-center text-muted small">
+                &copy; 2026 Demon Slayer MCO Project
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="rsc/js/main.js"></script>
+    <script>
+        function triggerMagicSplash(name, powerTitle, role, va, img, desc) {
+            const overlay = document.getElementById('magic-splash-overlay');
+            const splashImg = document.getElementById('splash-img');
+            const splashText = document.getElementById('splash-text');
+
+            splashImg.src = img;
+            splashText.innerText = powerTitle;
+            overlay.classList.add('active');
+
+            setTimeout(() => {
+                overlay.classList.remove('active');
+
+                document.getElementById('modal-char-name').innerText = name;
+                document.getElementById('modal-char-role').innerText = role;
+                document.getElementById('modal-char-va').innerText = va;
+                document.getElementById('modal-char-img').src = img;
+                document.getElementById('modal-char-desc').innerText = desc;
+
+                const charModal = new bootstrap.Modal(document.getElementById('characterModal'));
+                charModal.show();
+            }, 1200);
+        }
+
+        // 🌟 TYPEWRITER INTRO SCRIPT
+        document.addEventListener('DOMContentLoaded', () => {
+            const introText = "Aboard a speeding train enveloped in darkness, a resilient band of young heroes must bravely shatter their own happiest memories to wake up to a brutal reality, standing as the last line of defense against a sadistic monster who shapes dreams into deadly cages and feasts on human vulnerability."
+            
+            const outputEl = document.getElementById('typewriter-output');
+            const overlayEl = document.getElementById('character-intro-overlay');
+            const mainContentEl = document.getElementById('characters-main-content');
+            const skipBtn = document.getElementById('skip-intro-btn');
+            
+            let i = 0;
+            let speed = 30; // Typing speed in milliseconds per letter
+
+            function typeWriter() {
+                if (i < introText.length) {
+                    if (introText.charAt(i) === '\n') {
+                        outputEl.innerHTML += '<br>';
+                    } else {
+                        outputEl.innerHTML += introText.charAt(i);
+                    }
+                    i++;
+                    setTimeout(typeWriter, speed);
+                } else {
+                    setTimeout(dismissIntro, 2500);
+                }
+            }
+
+            function dismissIntro() {
+                if (!overlayEl) return;
+                overlayEl.style.opacity = '0';
+                overlayEl.style.transition = 'opacity 0.8s ease';
+                setTimeout(() => {
+                    overlayEl.remove();
+                    if (mainContentEl) mainContentEl.style.opacity = '1';
+                }, 800);
+            }
+
+            setTimeout(typeWriter, 600);
+
+            if (skipBtn) {
+                skipBtn.addEventListener('click', dismissIntro);
+            }
+        });
+    </script>
+</body>
+</html>
